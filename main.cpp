@@ -5,6 +5,8 @@
 #include <vector>
 #include <iterator>
 
+#include "genetics.h"
+
 using Matrix = std::vector<std::vector<int>>;
 
 /// Affiche une matrice.
@@ -80,7 +82,7 @@ std::pair<Matrix,Matrix> get_working_matrix() {
         for (std::string str : integers) {
             line.push_back(std::stoi(str));
         }
-        if (line.size() < task_numbers) {
+        if ((int) line.size() < task_numbers) {
             throw std::runtime_error("Matrice malformée.");
         }
         other.push_back(line);
@@ -96,7 +98,7 @@ std::pair<Matrix,Matrix> get_working_matrix() {
         for (std::string str : integers) {
             line.push_back(std::stoi(str));
         }
-        if (line.size() < task_numbers) {
+        if ((int) line.size() < task_numbers) {
             throw std::runtime_error("Matrice malformée.");
         }
         result.push_back(line);
@@ -107,6 +109,8 @@ std::pair<Matrix,Matrix> get_working_matrix() {
 
 
 int main() {
+    srand (time(NULL));
     print_matrix(get_working_matrix().second);
+
     return 0;
 }
