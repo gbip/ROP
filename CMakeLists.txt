@@ -3,5 +3,5 @@ project(ROP)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp)
+set(SOURCE_FILES main.cpp genetics.cpp)
 add_executable(ROP ${SOURCE_FILES})
