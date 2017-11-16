@@ -4,8 +4,11 @@
 #include <array>
 #include <vector>
 #include <iterator>
+#include <ctime>
 
 #include "genetics.h"
+
+#define DEBUG
 
 using Matrix = std::vector<std::vector<int>>;
 
@@ -32,16 +35,31 @@ bool verify_file(const std::string &filename) {
 
 /// Récupères le nom du fichier à utiliser
 std::string get_filename() {
+#ifndef DEBUG
     std::cout << "Entrer le chemin du fichier à utiliser:" << std::endl;
     std::string result;
     std::getline(std::cin,result);
     return result;
+#else
+    std::string result("../PROB401.TXT");
+    return result;
+#endif
+}
+
+/// Retourne le stream représentant un fichier.
+std::ifstream get_file_stream(std::string filename) {
+    if (!verify_file(filename)) {
+        throw std::runtime_error("Fichier invalide");
+    }
+    else {
+        return std::ifstream(filename, std::ios::in);
+    }
 }
 
 /// Lis un fichier en mémoire depuis le chemin donné en argument.
 std::vector<std::string> get_file_lines(const std::string filename) {
     std::vector<std::string> result;
-    std::ifstream stream(filename, std::ios::in);
+    auto stream = get_file_stream(filename);
     for (std::string line; getline(stream, line);) {
         result.push_back(line);
     }
@@ -64,13 +82,8 @@ int get_matrix_size(std::vector<std::string>& data) {
 /// Renvoies la matrice des coûts de transition et la matrice des temps initiaux.
 /// La première matrice est celle des coûtes de transition (la grosse).
 /// La seconde matrice est celle des coûts/temps initiaux pour chaques tâches (le tableau 2x2).
-std::pair<Matrix,Matrix> get_working_matrix() {
+std::pair<Matrix,Matrix> get_working_matrix(std::vector<std::string> file) {
     /// TODO : FIXME
-    const std::string filename("../PROB401.TXT");
-    if (!verify_file(filename)) {
-        throw std::runtime_error("Fichier invalide");
-    }
-    auto file = get_file_lines(filename);
     auto task_numbers = get_matrix_size(file);
 
     Matrix other;
@@ -109,8 +122,26 @@ std::pair<Matrix,Matrix> get_working_matrix() {
 
 
 int main() {
-    srand (time(NULL));
-    print_matrix(get_working_matrix().second);
+    std::srand(std::time(0));
+    std::string filename = get_filename();
+    auto file = get_file_lines(filename);
+    const auto matrix = get_working_matrix(file);
+
+    Population genetics(get_matrix_size(file));
+
+    for (int i =0; i < 10000; i++) {
+        genetics.iterate(matrix.second, matrix.first);
+    }
+
+    genetics.sort_solution(matrix.second,matrix.first);
+
+    std::cout << "Solution : " << std::endl;
+    for (auto i : genetics._solutions[0]._order) {
+        std::cout << std::to_string(i._id) << " | ";
+    }
+    std::cout << std::endl;
+    std::cout << "Pour un score de : " << std::to_string(genetics._solutions[0].score(matrix.second,matrix.first));
+
 
     return 0;
 }

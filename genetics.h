@@ -10,26 +10,26 @@
 /// La taille de la population.
 const int POPULATION_SIZE = 50;
 
-using Matrix = std::vector<std::vector<int>>;
+/// Taille du pool d'enfants génerés.
+const int POOL_SIZE = 150;
 
-/// Ce type est présent pour éviter les caste de std::vector<int>::size_type en int.
-using usize = std::vector<int>::size_type;
+using Matrix = std::vector<std::vector<int>>;
 
 /// Une tâche individuelle, avec id sa position dans le tableau.
 /// Gène.
 struct Task {
-    Task(int id) : id(id){};
-    int id;
+    Task(int id) : _id(id){};
+    int _id;
 };
 
 /// Une solution possible (individu) est une suite de tâches.
 /// Individu.
 class Solution {
 public :
-    Solution() : order() {};
+    Solution() : _order(), _solution_size() {};
 
     /// Construis une solution aléatoire.
-    Solution(const Matrix& mat);
+    Solution(const int solution_size);
 
     /// Evalue le score d'une solution.
     int score(const Matrix& initial_matrix, const Matrix& other_matrix) const;
@@ -40,21 +40,26 @@ public :
     /// Mute une solution en permuttant deux gènes.
     void mutate();
     /// Chromosomes.
-    std::vector<Task> order;
+    std::vector<Task> _order;
+
+    int _solution_size;
 };
 
 
 /// Représente une population d'individus.
 class Population {
 public :
-    Population() : solutions() {};
+    Population() : _solutions() {};
 
     /// Construis une nouvelle population aléatoire.
-    Population(const Matrix& mat);
+    Population(const int solution_size);
 
     /// Réalise une itération de l'algorithme de génétique.
     void iterate(const Matrix& initial_matrix, const Matrix& other_matrix);
 
+    /// Trie les solutions selon leur score.
+    void sort_solution(const Matrix &initial_matrix, const Matrix &other_matrix);
+
     /// Individus.
-    std::array<Solution,50> solutions;
+    std::array<Solution,50> _solutions;
 };
