@@ -11,7 +11,7 @@
 const int POPULATION_SIZE = 50;
 
 /// Taille du pool d'enfants génerés.
-const int POOL_SIZE = 150;
+const int POOL_SIZE = 500;
 
 using Matrix = std::vector<std::vector<int>>;
 

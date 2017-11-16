@@ -74,6 +74,25 @@ std::vector<std::string> split(std::string const &input) {
     return ret;
 }
 
+/// Concatènes les lignes d'une chaîne de caractère en une seule chaîne.
+std::string concat(const std::vector<std::string>& lines) {
+    std::string result;
+
+    for (auto str: lines) {
+        result = result + std::string(" ") + str;
+    }
+    return result;
+}
+
+std::vector<int> string_to_int(const std::string& str) {
+    auto splitted_str = split(str);
+    std::vector<int> result;
+    for (auto c : splitted_str) {
+        result.push_back(std::stoi(c));
+    }
+    return result;
+}
+
 /// Renvoies la taille des données
 int get_matrix_size(std::vector<std::string>& data) {
     return std::stoi(split(data[0])[0]);
@@ -83,41 +102,31 @@ int get_matrix_size(std::vector<std::string>& data) {
 /// La première matrice est celle des coûtes de transition (la grosse).
 /// La seconde matrice est celle des coûts/temps initiaux pour chaques tâches (le tableau 2x2).
 std::pair<Matrix,Matrix> get_working_matrix(std::vector<std::string> file) {
-    /// TODO : FIXME
-    auto task_numbers = get_matrix_size(file);
+    int size = get_matrix_size(file);
 
-    Matrix other;
-    // Parsing des coûts initiaux et du temps initial.
-    for (int i =1; i <3; i++) {
+    Matrix initial_costs;
+    Matrix mat;
+    std::vector<int> data = string_to_int(concat(file));
+
+    // Le +2 est là car on a 2 tableau.
+    for (int i = 0; i < size + 2; i++) {
         std::vector<int> line;
-        auto l = file[i];
-        auto integers = split(l);
-        for (std::string str : integers) {
-            line.push_back(std::stoi(str));
+        for (int k = 0; k < size; k++) {
+            line.push_back(data[k+i*size]);
         }
-        if ((int) line.size() < task_numbers) {
-            throw std::runtime_error("Matrice malformée.");
+        if ((int) line.size() < size) {
+            throw std::runtime_error("Matrice malformée");
         }
-        other.push_back(line);
+        else {
+            if (i < 2) {
+                initial_costs.push_back(line);
+            } else {
+                mat.push_back(line);
+            }
+        }
     }
 
-    Matrix result;
-    file.erase(file.begin(),file.begin()+3);
-
-    // Parsing de la matrice principale (coût de changement de tâche).
-    for (auto l : file) {
-        auto integers = split(l);
-        std::vector<int> line;
-        for (std::string str : integers) {
-            line.push_back(std::stoi(str));
-        }
-        if ((int) line.size() < task_numbers) {
-            throw std::runtime_error("Matrice malformée.");
-        }
-        result.push_back(line);
-    }
-
-    return std::pair<Matrix,Matrix>(result,other);
+    return std::pair<Matrix,Matrix>(mat,initial_costs);
 }
 
 
@@ -129,7 +138,7 @@ int main() {
 
     Population genetics(get_matrix_size(file));
 
-    for (int i =0; i < 10000; i++) {
+    for (int i =0; i < 50000; i++) {
         genetics.iterate(matrix.second, matrix.first);
     }
 
