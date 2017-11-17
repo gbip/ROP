@@ -8,10 +8,13 @@
 #include <array>
 
 /// La taille de la population.
-const int POPULATION_SIZE = 50;
+const int POPULATION_SIZE = 150;
 
 /// Taille du pool d'enfants génerés.
-const int POOL_SIZE = 500;
+const int POOL_SIZE = 150;
+
+/// Taux de mutation en pourcent. Ex : 40 <=> 40% de mutation.
+const int MUTATION_RATE = 30;
 
 using Matrix = std::vector<std::vector<int>>;
 
@@ -34,11 +37,16 @@ public :
     /// Evalue le score d'une solution.
     int score(const Matrix& initial_matrix, const Matrix& other_matrix) const;
 
-    /// Crées deux enfants à partir de deux parents via la méthode du 2-pop, en choisissant un point de coupure au hasard.
-    static std::pair<Solution,Solution> enfant(const Solution& sol1, const Solution& sol2);;
+    /// Crées deux enfants à partir de deux parents via la méthode OX1.
+    static std::pair<Solution,Solution> enfant(const Solution& sol1, const Solution& sol2);
+
 
     /// Mute une solution en permuttant deux gènes.
     void mutate();
+
+    /// Affiche une solution sur la sortie console.
+    void afficher_solution() const;
+
     /// Chromosomes.
     std::vector<Task> _order;
 
@@ -61,5 +69,5 @@ public :
     void sort_solution(const Matrix &initial_matrix, const Matrix &other_matrix);
 
     /// Individus.
-    std::array<Solution,50> _solutions;
+    std::array<Solution,POPULATION_SIZE> _solutions;
 };

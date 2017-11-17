@@ -136,21 +136,23 @@ int main() {
     auto file = get_file_lines(filename);
     const auto matrix = get_working_matrix(file);
 
-    Population genetics(get_matrix_size(file));
 
-    for (int i =0; i < 50000; i++) {
-        genetics.iterate(matrix.second, matrix.first);
+    for (int k = 0; k <10; k++) {
+        Population genetics(get_matrix_size(file));
+
+        for (int i = 0; i < 500; i++) {
+            genetics.iterate(matrix.second, matrix.first);
+        }
+
+        genetics.sort_solution(matrix.second, matrix.first);
+
+        std::cout << "Solution : " << std::endl;
+        for (auto i : genetics._solutions[0]._order) {
+            std::cout << std::to_string(i._id) << " | ";
+        }
+        std::cout << std::endl;
+        std::cout << "Pour un score de : " << std::to_string(genetics._solutions[0].score(matrix.second, matrix.first)) << std::endl;
     }
-
-    genetics.sort_solution(matrix.second,matrix.first);
-
-    std::cout << "Solution : " << std::endl;
-    for (auto i : genetics._solutions[0]._order) {
-        std::cout << std::to_string(i._id) << " | ";
-    }
-    std::cout << std::endl;
-    std::cout << "Pour un score de : " << std::to_string(genetics._solutions[0].score(matrix.second,matrix.first));
-
 
     return 0;
 }
