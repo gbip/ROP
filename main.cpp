@@ -8,7 +8,8 @@
 
 #include "genetics.h"
 
-#define DEBUG
+// Décommenter pour activer le mode "debug"
+//#define DEBUG
 
 using Matrix = std::vector<std::vector<int>>;
 
@@ -41,7 +42,7 @@ std::string get_filename() {
     std::getline(std::cin,result);
     return result;
 #else
-    std::string result("../PROB401.TXT");
+    std::string result("../test");
     return result;
 #endif
 }
@@ -139,7 +140,6 @@ int main() {
 
     for (int k = 0; k <10; k++) {
         Population genetics(get_matrix_size(file));
-
         for (int i = 0; i < 500; i++) {
             genetics.iterate(matrix.second, matrix.first);
         }
