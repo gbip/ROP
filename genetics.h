@@ -8,13 +8,16 @@
 #include <vector>
 
 /// La taille de la population.
-const int POPULATION_SIZE = 150;
+const int POPULATION_SIZE = 200;
 
 /// Taille du pool d'enfants génerés.
-const int POOL_SIZE = 150;
+const int POOL_SIZE = POPULATION_SIZE*0.8;
 
 /// Taux de mutation en pourcent. Ex : 40 <=> 40% de mutation.
-const int MUTATION_RATE = 30;
+const int MUTATION_RATE = 40;
+
+/// si cette variable est vraie, alors on considérera aussi les parents de la génération n pour créer la génération n+1.
+const bool APPEND_PARENTS_TO_CHILDRENS = true;
 
 using Matrix = std::vector<std::vector<int>>;
 
@@ -35,7 +38,7 @@ public:
 	Solution(const int solution_size);
 
 	/// Evalue le score d'une solution.
-	int score(const Matrix& initial_matrix, const Matrix& other_matrix) const;
+	int score(const Matrix& initial_matrix, const Matrix& other_matrix);
 
 	/// Crées deux enfants à partir de deux parents via la méthode OX1.
 	static std::pair<Solution, Solution> enfant(const Solution& sol1, const Solution& sol2);

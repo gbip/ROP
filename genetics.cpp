@@ -16,19 +16,21 @@ int random_number(int min, int max) {
 	return distr(ENG);
 }
 
-int Solution::score(const Matrix& initial_matrix, const Matrix& other_matrix) const {
-	int result = 0;
-	int first_task = this->_order[0]._id;
-	result += initial_matrix[1][first_task];
+int Solution::score(const Matrix& initial_matrix, const Matrix& other_matrix) {
+        //afficher_solution();
+        int result = 0;
+        int first_task = this->_order[0]._id;
+        result += initial_matrix[1][first_task];
+        int prev = first_task;
+        for (int i = 1; i < this->_solution_size; i++) {
+            int task = this->_order[i]._id;
+            result += other_matrix[task][prev];
+            prev = task;
+        }
+        //std::cout << "a un score de : " << result << std::endl;
+        return result;
+    }
 
-	int prev = 0;
-	for(int i = 1; i < this->_solution_size; i++) {
-		int task = this->_order[i]._id;
-		result += other_matrix[prev][task];
-		prev = i;
-	}
-	return result;
-}
 
 Solution::Solution(const int solution_size) : _order(), _solution_size(solution_size) {
 	std::vector<int> tasks;
@@ -177,15 +179,23 @@ void Population::iterate(const Matrix& initial_matrix, const Matrix& other_matri
 	}
 
 	// On rajoute les parents aux candidats.
-	for(auto p : this->_solutions) {
-		candidats.push_back(p);
-	}
+    if (APPEND_PARENTS_TO_CHILDRENS) {
+        for (auto p : this->_solutions) {
+            candidats.push_back(p);
+        }
+    }
+
 
 	// On trie le tableau de solution de la meilleur à la moins bonne.
-	std::sort(candidats.begin(), candidats.end(), [initial_matrix, other_matrix](const Solution& a, const Solution& b) -> bool {
-		return a.score(initial_matrix, other_matrix) > b.score(initial_matrix, other_matrix);
+	std::sort(candidats.begin(), candidats.end(), [initial_matrix, other_matrix](Solution& a,Solution& b) -> bool {
+		return a.score(initial_matrix, other_matrix) < b.score(initial_matrix, other_matrix);
 	});
 
+    /*
+    for (auto s : candidats) {
+        std::cout << std::to_string(s.score(initial_matrix,other_matrix)) << " < ";
+    }
+     */
 	// Création de la nouvelle population pour la génération suivante.
 	for(int i = 0; i < POPULATION_SIZE; i++) {
 		this->_solutions[i] = candidats[i];
@@ -193,9 +203,15 @@ void Population::iterate(const Matrix& initial_matrix, const Matrix& other_matri
 }
 
 void Population::sort_solution(const Matrix& initial_matrix, const Matrix& other_matrix) {
-	std::sort(this->_solutions.begin(), this->_solutions.end(), [initial_matrix, other_matrix](const Solution& a, const Solution& b) -> bool {
+
+    std::cout << std::endl;
+	std::sort(this->_solutions.begin(), this->_solutions.end(), [initial_matrix, other_matrix](Solution& a,Solution& b) -> bool {
 		return a.score(initial_matrix, other_matrix) > b.score(initial_matrix, other_matrix);
 	});
+
+
+
+
 }
 
 void Solution::afficher_solution() const {

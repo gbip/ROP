@@ -9,7 +9,7 @@
 #include "genetics.h"
 
 // Décommenter pour activer le mode "debug"
-//#define DEBUG
+#define DEBUG
 
 using Matrix = std::vector<std::vector<int>>;
 
@@ -42,7 +42,7 @@ std::string get_filename() {
 	std::getline(std::cin, result);
 	return result;
 #else
-	std::string result("../test");
+	std::string result("../PROB401.TXT");
 	return result;
 #endif
 }
@@ -106,6 +106,7 @@ std::pair<Matrix, Matrix> get_working_matrix(std::vector<std::string> file) {
 	Matrix initial_costs;
 	Matrix mat;
 	std::vector<int> data = string_to_int(concat(file));
+    data.erase(data.begin());
 
 	// Le +2 est là car on a 2 tableau.
 	for(int i = 0; i < size + 2; i++) {
@@ -133,8 +134,11 @@ int main() {
 	std::string filename = get_filename();
 	auto file = get_file_lines(filename);
 	const auto matrix = get_working_matrix(file);
-
-
+    int c_max =0;
+            for (auto t : matrix.second[0]) {
+                c_max+=t;
+            }
+    std::cout << "CMAX : " << std::to_string(c_max) << std::endl;
 	for(int k = 0; k < 10; k++) {
 		Population genetics(get_matrix_size(file));
 		for(int i = 0; i < 500; i++) {
