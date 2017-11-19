@@ -11,10 +11,10 @@
 const int POPULATION_SIZE = 200;
 
 /// Taille du pool d'enfants génerés.
-const int POOL_SIZE = POPULATION_SIZE*0.8;
+const int POOL_SIZE = POPULATION_SIZE*5;
 
 /// Taux de mutation en pourcent. Ex : 40 <=> 40% de mutation.
-const int MUTATION_RATE = 40;
+const int MUTATION_RATE = 70;
 
 /// si cette variable est vraie, alors on considérera aussi les parents de la génération n pour créer la génération n+1.
 const bool APPEND_PARENTS_TO_CHILDRENS = true;

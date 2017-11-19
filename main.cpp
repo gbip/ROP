@@ -9,7 +9,7 @@
 #include "genetics.h"
 
 // Décommenter pour activer le mode "debug"
-#define DEBUG
+//#define DEBUG
 
 using Matrix = std::vector<std::vector<int>>;
 
