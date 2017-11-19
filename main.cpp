@@ -140,7 +140,7 @@ int main() {
             }
     std::cout << "CMAX : " << std::to_string(c_max) << std::endl;
 	for(int k = 0; k < 10; k++) {
-		Population genetics(get_matrix_size(file));
+		genetics::Population genetics(get_matrix_size(file));
 		for(int i = 0; i < 500; i++) {
 			genetics.iterate(matrix.second, matrix.first);
 		}
