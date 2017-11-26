@@ -182,10 +182,14 @@ int main() {
 	}
 
 	std::cout << "CMAX : " << std::to_string(c_max) << std::endl;
+	/*
 	for(int k = 0; k < 10; k++) {
-		// do_genetics(matrix, get_matrix_size(file));
-		do_tabu(matrix, get_matrix_size(file));
+	    // do_genetics(matrix, get_matrix_size(file));
+	    do_tabu(matrix, get_matrix_size(file));
 	}
+	 */
+	do_tabu(matrix, get_matrix_size(file));
+
 
 	return 0;
 }

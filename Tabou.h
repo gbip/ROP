@@ -20,10 +20,10 @@ namespace tabu {
 	const unsigned long MEMORY_SIZE = 100 * NEIGHBOROOD_SIZE;
 
 	/// Le nombre d'itérations sans améliorations qui entrainent la fin de l'algorithme
-	const int ITERATIONS_BEFORE_STOP = 25;
+	const int ITERATIONS_BEFORE_STOP = 75;
 
 	/// La vitesse de croissance du voisinnage quand on stagne.
-	const int GROWING_RATE = 1;
+	const float GROWING_RATE = 0.07;
 
 	/// Le nombre de réinitialisations
 	const int MAX_REINITIALIZATION = 25;

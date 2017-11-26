@@ -119,6 +119,7 @@ namespace tabu {
 			for(auto n : neighbors) {
 				int score = n.score(intial_cost_matrix, transition_cost_matrix);
 				if(score < _best_score) {
+					_reinitializations = 0;
 					_best = n;
 					_best_score = score;
 				}
@@ -134,16 +135,13 @@ namespace tabu {
 				if(_iterations_without_ameliorations >= ITERATIONS_BEFORE_STOP / 2 && _reinitializations != MAX_REINITIALIZATION) {
 					_reinitializations++;
 					_current = Solution(_solution_size);
-					std::cout << "Réinitialisation." << std::endl;
 					_iterations_without_ameliorations = 0;
 					_forbidden.resize(MEMORY_SIZE);
 					_neighborood_size = NEIGHBOROOD_SIZE;
 				} else {
 					_iterations_without_ameliorations++;
-					std::cout
-					    << (static_cast<float>(_iterations_without_ameliorations) / static_cast<float>(ITERATIONS_BEFORE_STOP)) * 100
-					    << "%" << std::endl;
-					_neighborood_size = _neighborood_size * GROWING_RATE;
+
+					_neighborood_size = _neighborood_size + static_cast<int>(static_cast<float>(_neighborood_size) * GROWING_RATE);
 				}
 			} else {
 				// On reprends une taille de mémoire normale si on converge. Sinon ...
@@ -151,7 +149,6 @@ namespace tabu {
 				_forbidden.resize(MEMORY_SIZE);
 				_neighborood_size = NEIGHBOROOD_SIZE;
 			}
-			std::cout << "Score actuel : " << _best_score << std::endl;
 		}
 	}
 
