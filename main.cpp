@@ -15,8 +15,10 @@
 /// Le nombre d'itérations pour l'algorithme de génétique.
 const int GEN_ITERATIONS = 500;
 
+/*
 /// Le nombre d'itérations pour l'algorithme du tabou
-const int TABOU_ITERATIONS = 500;
+const int TABOU_ITERATIONS = 50;
+*/
 
 using Matrix = std::vector<std::vector<int>>;
 
@@ -90,6 +92,7 @@ std::string concat(const std::vector<std::string>& lines) {
 	return result;
 }
 
+/// Convertie une chaîne de caractères en un tableau d'entier.
 std::vector<int> string_to_int(const std::string& str) {
 	auto splitted_str = split(str);
 	std::vector<int> result;
@@ -156,9 +159,12 @@ void do_genetics(std::pair<Matrix,Matrix> matrix, int size) {
 /// Applique l'algorithme de la recherche avec tabou à notre problème.
 void do_tabu(std::pair<Matrix,Matrix> matrix,int size) {
     tabu::Tabu tabu(size);
+    /*
     for (int i = 0; i < TABOU_ITERATIONS;i++) {
-        tabu.do_iteration(matrix.second,matrix.first);
-    }
+        std::cout << i << std::endl;
+        tabu.do_iterations(matrix.second, matrix.first);
+    }*/
+    tabu.do_iterations(matrix.second,matrix.first);
     std::cout << "Solution - TABOU : " << std::endl;
     for (auto i : tabu._best._solution) {
         std::cout << std::to_string(i) << "|";
