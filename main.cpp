@@ -7,9 +7,16 @@
 #include <vector>
 
 #include "genetics.h"
+#include "Tabu.h"
 
 // Décommenter pour activer le mode "debug"
-//#define DEBUG
+#define DEBUG
+
+/// Le nombre d'itérations pour l'algorithme de génétique.
+const int GEN_ITERATIONS = 500;
+
+/// Le nombre d'itérations pour l'algorithme du tabou
+const int TABOU_ITERATIONS = 500;
 
 using Matrix = std::vector<std::vector<int>>;
 
@@ -128,6 +135,37 @@ std::pair<Matrix, Matrix> get_working_matrix(std::vector<std::string> file) {
 	return std::pair<Matrix, Matrix>(mat, initial_costs);
 }
 
+/// Applique l'algorithme de génétique à notre problème.
+void do_genetics(std::pair<Matrix,Matrix> matrix, int size) {
+    genetics::Population genetics(size);
+    for(int i = 0; i < GEN_ITERATIONS; i++) {
+        genetics.iterate(matrix.second, matrix.first);
+    }
+
+    genetics.sort_solution(matrix.second, matrix.first);
+
+    std::cout << "Solution : " << std::endl;
+    for(auto i : genetics._solutions[0]._order) {
+        std::cout << std::to_string(i._id) << " | ";
+    }
+    std::cout << std::endl;
+    std::cout << "Pour un score de : " << std::to_string(genetics._solutions[0].score(matrix.second, matrix.first))
+              << std::endl;
+}
+
+/// Applique l'algorithme de la recherche avec tabou à notre problème.
+void do_tabu(std::pair<Matrix,Matrix> matrix,int size) {
+    tabu::Tabu tabu(size);
+    for (int i = 0; i < TABOU_ITERATIONS;i++) {
+        tabu.do_iteration(matrix.second,matrix.first);
+    }
+    std::cout << "Solution - TABOU : " << std::endl;
+    for (auto i : tabu._best._solution) {
+        std::cout << std::to_string(i) << "|";
+    }
+    std::cout << std::endl <<"Pour un score de : " << std::to_string(tabu._best_score) << std::endl;
+
+}
 
 int main() {
 	std::srand(std::time(0));
@@ -138,22 +176,11 @@ int main() {
 	for(auto t : matrix.second[0]) {
 		c_max += t;
 	}
+
 	std::cout << "CMAX : " << std::to_string(c_max) << std::endl;
 	for(int k = 0; k < 10; k++) {
-		genetics::Population genetics(get_matrix_size(file));
-		for(int i = 0; i < 500; i++) {
-			genetics.iterate(matrix.second, matrix.first);
-		}
-
-		genetics.sort_solution(matrix.second, matrix.first);
-
-		std::cout << "Solution : " << std::endl;
-		for(auto i : genetics._solutions[0]._order) {
-			std::cout << std::to_string(i._id) << " | ";
-		}
-		std::cout << std::endl;
-		std::cout << "Pour un score de : " << std::to_string(genetics._solutions[0].score(matrix.second, matrix.first))
-		          << std::endl;
+		//do_genetics(matrix, get_matrix_size(file));
+        do_tabu(matrix,get_matrix_size(file));
 	}
 
 	return 0;

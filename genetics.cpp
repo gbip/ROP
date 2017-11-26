@@ -7,27 +7,27 @@
 #include <iostream>
 #include <set>
 
-std::random_device RD;
-std::mt19937 ENG(RD());
+
 namespace genetics {
+
+	std::random_device RD;
+	std::mt19937 ENG(RD());
+
 	int random_number(int min, int max) {
-		// std::cout << std::to_string(min) << " | " << std::to_string(max) << std::endl;
 		std::uniform_int_distribution<> distr(min, max);
 		return distr(ENG);
 	}
 
-	int Solution::score(const Matrix& initial_matrix, const Matrix& other_matrix) {
-		// afficher_solution();
+	int Solution::score(const Matrix& intial_cost_matrix, const Matrix& transition_cost_matrix) const{
 		int result = 0;
 		int first_task = this->_order[0]._id;
-		result += initial_matrix[1][first_task];
+		result += intial_cost_matrix[1][first_task];
 		int prev = first_task;
 		for(int i = 1; i < this->_solution_size; i++) {
 			int task = this->_order[i]._id;
-			result += other_matrix[task][prev];
+			result += transition_cost_matrix[task][prev];
 			prev = task;
 		}
-		// std::cout << "a un score de : " << result << std::endl;
 		return result;
 	}
 
@@ -151,13 +151,26 @@ namespace genetics {
 		this->_order[second] = first_gene;
 	}
 
+	void Solution::afficher_solution() const {
+		if(_solution_size != _order.size()) {
+			std::cout << "Solution malformée !" << std::endl;
+			std::cout << "Solution size : " << std::to_string(_solution_size) << " | "
+					  << "_order.size() : " << std::to_string(_order.size()) << std::endl;
+		}
+		std::cout << "[";
+		for(int i = 0; i < _solution_size; i++) {
+			std::cout << std::to_string(_order[i]._id) << ",";
+		}
+		std::cout << "]" << std::endl;
+	}
+
 	Population::Population(const int solution_size) : _solutions() {
 		for(int i = 0; i < POPULATION_SIZE; i++) {
 			_solutions[i] = Solution(solution_size);
 		}
 	}
 
-	void Population::iterate(const Matrix& initial_matrix, const Matrix& other_matrix) {
+	void Population::iterate(const Matrix& intial_cost_matrix, const Matrix& transition_cost_matrix) {
 		std::vector<Solution> candidats;
 
 		// Création d'un pool d'enfants.
@@ -186,40 +199,20 @@ namespace genetics {
 
 
 		// On trie le tableau de solution de la meilleur à la moins bonne.
-		std::sort(candidats.begin(), candidats.end(), [initial_matrix, other_matrix](Solution& a, Solution& b) -> bool {
-			return a.score(initial_matrix, other_matrix) < b.score(initial_matrix, other_matrix);
+		std::sort(candidats.begin(), candidats.end(), [intial_cost_matrix, transition_cost_matrix](Solution& a, Solution& b) -> bool {
+			return a.score(intial_cost_matrix, transition_cost_matrix) < b.score(intial_cost_matrix, transition_cost_matrix);
 		});
 
-		/*
-		for (auto s : candidats) {
-		    std::cout << std::to_string(s.score(initial_matrix,other_matrix)) << " < ";
-		}
-		 */
 		// Création de la nouvelle population pour la génération suivante.
 		for(int i = 0; i < POPULATION_SIZE; i++) {
 			this->_solutions[i] = candidats[i];
 		}
 	}
 
-	void Population::sort_solution(const Matrix& initial_matrix, const Matrix& other_matrix) {
-
+	void Population::sort_solution(const Matrix& intial_cost_matrix, const Matrix& transition_cost_matrix) {
 		std::cout << std::endl;
-		std::sort(this->_solutions.begin(), this->_solutions.end(), [initial_matrix, other_matrix](Solution& a, Solution& b) -> bool {
-			return a.score(initial_matrix, other_matrix) > b.score(initial_matrix, other_matrix);
+		std::sort(this->_solutions.begin(), this->_solutions.end(), [intial_cost_matrix, transition_cost_matrix](Solution& a, Solution& b) -> bool {
+			return a.score(intial_cost_matrix, transition_cost_matrix) > b.score(intial_cost_matrix, transition_cost_matrix);
 		});
-	}
-
-	void Solution::afficher_solution() const {
-
-		if(_solution_size != _order.size()) {
-			std::cout << "Solution malformée !" << std::endl;
-			std::cout << "Solution size : " << std::to_string(_solution_size) << " | "
-			          << "_order.size() : " << std::to_string(_order.size()) << std::endl;
-		}
-		std::cout << "[";
-		for(int i = 0; i < _solution_size; i++) {
-			std::cout << std::to_string(_order[i]._id) << ",";
-		}
-		std::cout << "]" << std::endl;
 	}
 }

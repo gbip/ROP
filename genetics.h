@@ -40,13 +40,12 @@ namespace genetics {
 		Solution(const int solution_size);
 
 		/// Evalue le score d'une solution.
-		int score(const Matrix& initial_matrix, const Matrix& other_matrix);
+		int score(const Matrix& intial_cost_matrix, const Matrix& transition_cost_matrix) const;
 
 		/// Crées deux enfants à partir de deux parents via la méthode OX1.
 		static std::pair<Solution, Solution> enfant(const Solution& sol1, const Solution& sol2);
 
-
-		/// Mute une solution en permuttant deux gènes.
+		/// Mute une solution en permuttant deux gènes (2-opt).
 		void mutate();
 
 		/// Affiche une solution sur la sortie console.
@@ -68,10 +67,10 @@ namespace genetics {
 		Population(const int solution_size);
 
 		/// Réalise une itération de l'algorithme de génétique.
-		void iterate(const Matrix& initial_matrix, const Matrix& other_matrix);
+		void iterate(const Matrix& intial_cost_matrix, const Matrix& transition_cost_matrix);
 
 		/// Trie les solutions selon leur score.
-		void sort_solution(const Matrix& initial_matrix, const Matrix& other_matrix);
+		void sort_solution(const Matrix& intial_cost_matrix, const Matrix& transition_cost_matrix);
 
 		/// Individus.
 		std::array<Solution, POPULATION_SIZE> _solutions;
