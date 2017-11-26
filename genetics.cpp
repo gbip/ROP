@@ -18,7 +18,7 @@ namespace genetics {
 		return distr(ENG);
 	}
 
-	int Solution::score(const Matrix& intial_cost_matrix, const Matrix& transition_cost_matrix) const{
+	int Solution::score(const Matrix& intial_cost_matrix, const Matrix& transition_cost_matrix) const {
 		int result = 0;
 		int first_task = this->_order[0]._id;
 		result += intial_cost_matrix[1][first_task];
@@ -155,7 +155,7 @@ namespace genetics {
 		if(_solution_size != _order.size()) {
 			std::cout << "Solution malformée !" << std::endl;
 			std::cout << "Solution size : " << std::to_string(_solution_size) << " | "
-					  << "_order.size() : " << std::to_string(_order.size()) << std::endl;
+			          << "_order.size() : " << std::to_string(_order.size()) << std::endl;
 		}
 		std::cout << "[";
 		for(int i = 0; i < _solution_size; i++) {
@@ -211,8 +211,10 @@ namespace genetics {
 
 	void Population::sort_solution(const Matrix& intial_cost_matrix, const Matrix& transition_cost_matrix) {
 		std::cout << std::endl;
-		std::sort(this->_solutions.begin(), this->_solutions.end(), [intial_cost_matrix, transition_cost_matrix](Solution& a, Solution& b) -> bool {
-			return a.score(intial_cost_matrix, transition_cost_matrix) > b.score(intial_cost_matrix, transition_cost_matrix);
-		});
+		std::sort(this->_solutions.begin(),
+		          this->_solutions.end(),
+		          [intial_cost_matrix, transition_cost_matrix](Solution& a, Solution& b) -> bool {
+			          return a.score(intial_cost_matrix, transition_cost_matrix) > b.score(intial_cost_matrix, transition_cost_matrix);
+			      });
 	}
 }

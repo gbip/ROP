@@ -6,8 +6,8 @@
 #include <sstream>
 #include <vector>
 
-#include "genetics.h"
 #include "Tabu.h"
+#include "genetics.h"
 
 // Décommenter pour activer le mode "debug"
 #define DEBUG
@@ -139,38 +139,36 @@ std::pair<Matrix, Matrix> get_working_matrix(std::vector<std::string> file) {
 }
 
 /// Applique l'algorithme de génétique à notre problème.
-void do_genetics(std::pair<Matrix,Matrix> matrix, int size) {
-    genetics::Population genetics(size);
-    for(int i = 0; i < GEN_ITERATIONS; i++) {
-        genetics.iterate(matrix.second, matrix.first);
-    }
+void do_genetics(std::pair<Matrix, Matrix> matrix, int size) {
+	genetics::Population genetics(size);
+	for(int i = 0; i < GEN_ITERATIONS; i++) {
+		genetics.iterate(matrix.second, matrix.first);
+	}
 
-    genetics.sort_solution(matrix.second, matrix.first);
+	genetics.sort_solution(matrix.second, matrix.first);
 
-    std::cout << "Solution : " << std::endl;
-    for(auto i : genetics._solutions[0]._order) {
-        std::cout << std::to_string(i._id) << " | ";
-    }
-    std::cout << std::endl;
-    std::cout << "Pour un score de : " << std::to_string(genetics._solutions[0].score(matrix.second, matrix.first))
-              << std::endl;
+	std::cout << "Solution : " << std::endl;
+	for(auto i : genetics._solutions[0]._order) {
+		std::cout << std::to_string(i._id) << " | ";
+	}
+	std::cout << std::endl;
+	std::cout << "Pour un score de : " << std::to_string(genetics._solutions[0].score(matrix.second, matrix.first)) << std::endl;
 }
 
 /// Applique l'algorithme de la recherche avec tabou à notre problème.
-void do_tabu(std::pair<Matrix,Matrix> matrix,int size) {
-    tabu::Tabu tabu(size);
-    /*
-    for (int i = 0; i < TABOU_ITERATIONS;i++) {
-        std::cout << i << std::endl;
-        tabu.do_iterations(matrix.second, matrix.first);
-    }*/
-    tabu.do_iterations(matrix.second,matrix.first);
-    std::cout << "Solution - TABOU : " << std::endl;
-    for (auto i : tabu._best._solution) {
-        std::cout << std::to_string(i) << "|";
-    }
-    std::cout << std::endl <<"Pour un score de : " << std::to_string(tabu._best_score) << std::endl;
-
+void do_tabu(std::pair<Matrix, Matrix> matrix, int size) {
+	tabu::Tabu tabu(size);
+	/*
+	for (int i = 0; i < TABOU_ITERATIONS;i++) {
+	    std::cout << i << std::endl;
+	    tabu.do_iterations(matrix.second, matrix.first);
+	}*/
+	tabu.do_iterations(matrix.second, matrix.first);
+	std::cout << "Solution - TABOU : " << std::endl;
+	for(auto i : tabu._best._solution) {
+		std::cout << std::to_string(i) << "|";
+	}
+	std::cout << std::endl << "Pour un score de : " << std::to_string(tabu._best_score) << std::endl;
 }
 
 int main() {
@@ -185,8 +183,8 @@ int main() {
 
 	std::cout << "CMAX : " << std::to_string(c_max) << std::endl;
 	for(int k = 0; k < 10; k++) {
-		//do_genetics(matrix, get_matrix_size(file));
-        do_tabu(matrix,get_matrix_size(file));
+		// do_genetics(matrix, get_matrix_size(file));
+		do_tabu(matrix, get_matrix_size(file));
 	}
 
 	return 0;
