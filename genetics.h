@@ -8,6 +8,7 @@
 #include <vector>
 
 namespace genetics {
+
 	/// La taille de la population.
 	const int POPULATION_SIZE = 200;
 

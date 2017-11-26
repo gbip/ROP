@@ -5,5 +5,5 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wunused-variable -std=c++14 -std=
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(SOURCE_FILES main.cpp genetics.cpp Tabu.cpp Tabu.h)
+set(SOURCE_FILES main.cpp genetics.cpp Tabou.cpp Tabou.h)
 add_executable(ROP ${SOURCE_FILES})

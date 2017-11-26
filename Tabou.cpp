@@ -2,7 +2,7 @@
 // Created by paul on 19/11/17.
 //
 
-#include "Tabu.h"
+#include "Tabou.h"
 #include <algorithm>
 #include <iostream>
 
@@ -56,48 +56,50 @@ namespace tabu {
 		return Solution(copie, _solution_size);
 	}
 
-	std::pair<std::vector<Solution>, std::vector<Solution>>
-	    Solution::generate_neighbors(const int neighborood_size, std::deque<Solution> tabou) {
+	std::vector<Solution> Solution::generate_neighbors(const int neighborood_size, std::deque<Solution> tabou) {
 		std::vector<Solution> neighborood;
-		std::vector<Solution> permutations;
 		for(int i = 0; i < neighborood_size; i++) {
 			int pos1 = random_number(0, _solution_size - 1);
 			int pos2 = random_number(0, _solution_size - 1);
 			Solution variant = this->two_opt(pos1, pos2);
-			bool forbiden_permutation = std::find_if(tabou.begin(), tabou.end(), [variant](auto other) {
-				                            return equals(variant, other);
-				                        }) != tabou.end();
-			if(!forbiden_permutation or pos1 == pos2) {
-				neighborood.push_back(variant);
-				permutations.push_back(variant);
+			if(pos1 != pos2) {
+				bool forbiden_permutation = std::find_if(tabou.begin(), tabou.end(), [variant](auto other) {
+					                            return equals(variant, other);
+					                        }) != tabou.end();
+				if(!forbiden_permutation) {
+					neighborood.push_back(variant);
+				}
 			} else {
 				i--;
 			}
 		}
-		std::pair<std::vector<Solution>, std::vector<Solution>> result(neighborood, permutations);
-		return result;
+		return neighborood;
 	}
 
-	Tabu::Tabu()
+	Tabou::Tabou()
 	        : _best()
 	        , _current()
 	        , _current_score(0)
 	        , _best_score(0)
 	        , _iterations_without_ameliorations(0)
 	        , _neighborood_size(NEIGHBOROOD_SIZE)
+	        , _reinitializations(0)
+	        , _solution_size(0)
 	        , _forbidden() {}
 
-	Tabu::Tabu(int solution_size)
+	Tabou::Tabou(int solution_size)
 	        : _best(solution_size)
 	        , _current(_best)
 	        , _current_score(0)
 	        , _best_score(0)
 	        , _iterations_without_ameliorations(0)
 	        , _neighborood_size(NEIGHBOROOD_SIZE)
+	        , _reinitializations(0)
+	        , _solution_size(solution_size)
 	        , _forbidden() {}
 
-	void Tabu::do_iterations(const Matrix& intial_cost_matrix, const Matrix& transition_cost_matrix) {
-		while(!this->verify_stop_conidition()) {
+	void Tabou::do_iterations(const Matrix& intial_cost_matrix, const Matrix& transition_cost_matrix) {
+		while(!this->verify_stop_condition()) {
 			// On initialise avec un grand score le score de la solution actuelle pour qu'elle soit remplacée dès la
 			// première solution trouvée.
 			_current_score = 10000000;
@@ -108,13 +110,13 @@ namespace tabu {
 			auto neighbors = _current.generate_neighbors(_neighborood_size, _forbidden);
 
 			// Rajout des tabous.
-			for(auto p : neighbors.second) {
+			for(auto p : neighbors) {
 				_forbidden.push_front(p);
 			}
-			_forbidden.resize(MEMORY_SIZE);
+
 
 			// Recherche d'une nouvelle meilleur solution.
-			for(auto n : neighbors.first) {
+			for(auto n : neighbors) {
 				int score = n.score(intial_cost_matrix, transition_cost_matrix);
 				if(score < _best_score) {
 					_best = n;
@@ -129,16 +131,31 @@ namespace tabu {
 			}
 
 			if(old_best_score == _best_score) {
-				_iterations_without_ameliorations++;
-				_neighborood_size += NEIGHBOROOD_SIZE * GROWING_RATE;
+				if(_iterations_without_ameliorations >= ITERATIONS_BEFORE_STOP / 2 && _reinitializations != MAX_REINITIALIZATION) {
+					_reinitializations++;
+					_current = Solution(_solution_size);
+					std::cout << "Réinitialisation." << std::endl;
+					_iterations_without_ameliorations = 0;
+					_forbidden.resize(MEMORY_SIZE);
+					_neighborood_size = NEIGHBOROOD_SIZE;
+				} else {
+					_iterations_without_ameliorations++;
+					std::cout
+					    << (static_cast<float>(_iterations_without_ameliorations) / static_cast<float>(ITERATIONS_BEFORE_STOP)) * 100
+					    << "%" << std::endl;
+					_neighborood_size = _neighborood_size * GROWING_RATE;
+				}
 			} else {
+				// On reprends une taille de mémoire normale si on converge. Sinon ...
+				_iterations_without_ameliorations = 0;
+				_forbidden.resize(MEMORY_SIZE);
 				_neighborood_size = NEIGHBOROOD_SIZE;
 			}
 			std::cout << "Score actuel : " << _best_score << std::endl;
 		}
 	}
 
-	bool Tabu::verify_stop_conidition() {
+	bool Tabou::verify_stop_condition() {
 
 		return _iterations_without_ameliorations == ITERATIONS_BEFORE_STOP;
 	}

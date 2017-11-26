@@ -6,7 +6,7 @@
 #include <sstream>
 #include <vector>
 
-#include "Tabu.h"
+#include "Tabou.h"
 #include "genetics.h"
 
 // Décommenter pour activer le mode "debug"
@@ -157,7 +157,7 @@ void do_genetics(std::pair<Matrix, Matrix> matrix, int size) {
 
 /// Applique l'algorithme de la recherche avec tabou à notre problème.
 void do_tabu(std::pair<Matrix, Matrix> matrix, int size) {
-	tabu::Tabu tabu(size);
+	tabu::Tabou tabu(size);
 	/*
 	for (int i = 0; i < TABOU_ITERATIONS;i++) {
 	    std::cout << i << std::endl;
