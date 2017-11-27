@@ -10,15 +10,10 @@
 #include "genetics.h"
 
 // Décommenter pour activer le mode "debug"
-#define DEBUG
+//#define DEBUG
 
 /// Le nombre d'itérations pour l'algorithme de génétique.
 const int GEN_ITERATIONS = 500;
-
-/*
-/// Le nombre d'itérations pour l'algorithme du tabou
-const int TABOU_ITERATIONS = 50;
-*/
 
 using Matrix = std::vector<std::vector<int>>;
 
@@ -147,7 +142,7 @@ void do_genetics(std::pair<Matrix, Matrix> matrix, int size) {
 
 	genetics.sort_solution(matrix.second, matrix.first);
 
-	std::cout << "Solution : " << std::endl;
+	std::cout << "Solution - GENETIQUE : " << std::endl;
 	for(auto i : genetics._solutions[0]._order) {
 		std::cout << std::to_string(i._id) << " | ";
 	}
@@ -158,11 +153,6 @@ void do_genetics(std::pair<Matrix, Matrix> matrix, int size) {
 /// Applique l'algorithme de la recherche avec tabou à notre problème.
 void do_tabu(std::pair<Matrix, Matrix> matrix, int size) {
 	tabu::Tabou tabu(size);
-	/*
-	for (int i = 0; i < TABOU_ITERATIONS;i++) {
-	    std::cout << i << std::endl;
-	    tabu.do_iterations(matrix.second, matrix.first);
-	}*/
 	tabu.do_iterations(matrix.second, matrix.first);
 	std::cout << "Solution - TABOU : " << std::endl;
 	for(auto i : tabu._best._solution) {
@@ -182,14 +172,11 @@ int main() {
 	}
 
 	std::cout << "CMAX : " << std::to_string(c_max) << std::endl;
-	/*
+
+	// On fais 10 itérations de l'algo de génétique et on garde le meilleur résultat.
 	for(int k = 0; k < 10; k++) {
-	    // do_genetics(matrix, get_matrix_size(file));
-	    do_tabu(matrix, get_matrix_size(file));
+		do_genetics(matrix, get_matrix_size(file));
 	}
-	 */
 	do_tabu(matrix, get_matrix_size(file));
-
-
 	return 0;
 }
